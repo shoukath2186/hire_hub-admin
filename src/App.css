@@ -1,0 +1,50 @@
+.modal-box {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--background-paper);
+    box-shadow: 24px;
+    padding: 16px;
+    border-radius: 8px;
+    width: 90%; /* Default for xs screens */
+    max-width: 500px; /* Maximum width for larger screens */
+    text-align: center;
+  }
+  
+  @media (min-width: 600px) {
+    .modal-box {
+      width: 70%; /* For sm screens */
+    }
+  }
+  
+  @media (min-width: 900px) {
+    .modal-box {
+      width: 50%; /* For md screens */
+    }
+  }
+  
+  .button-cancel {
+    background-color: green;
+    color: white;
+  }
+  
+  .button-cancel:hover {
+    background-color: #388e3c;
+  }
+  
+  .button-submit {
+    background-color: #f44336;
+    color: white;
+  }
+  
+  .button-submit:hover {
+    background-color: #d32f2f;
+  }
+  
+  .button-container {
+    display: flex;
+    justify-content: center;
+    gap: 16px; /* Equivalent to gap: 2 in MUI */
+  }
+  
