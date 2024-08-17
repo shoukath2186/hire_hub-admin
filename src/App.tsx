@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Provider from './context/AppContext';
 
 import LoginPage from './pages/Login';
 import Layout from './components/Layout/Layout';
@@ -15,6 +16,8 @@ import RedirectIfAuthenticated from './components/RedirectIfAuthenticated';
 
 const App: React.FC = () => {
   return (
+    <>
+    <Provider>
     <Router>
       <ToastContainer />
       <Layout>
@@ -32,9 +35,12 @@ const App: React.FC = () => {
           <Route path="/candidates" element={<ProtectedRoute element={<CandidatesPage />} />} />
           <Route path="/employers" element={<ProtectedRoute element={<EmployersPage />} />} />
           <Route path="/categories" element={<ProtectedRoute element={<JobCategoriesPage />} />} />
+          <Route path="*" element={<ProtectedRoute element={<JobCategoriesPage />} />} />
         </Routes>
       </Layout>
     </Router>
+    </Provider>
+    </>
   );
 };
 

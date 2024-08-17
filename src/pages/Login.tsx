@@ -3,6 +3,7 @@ import React from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import { ProductCom } from '../context/AppContext';
 
 type Inputs = {
   email: string;
@@ -12,19 +13,31 @@ type Inputs = {
 const SignIn: React.FC = () => {
   const { register, handleSubmit, formState: { errors } } = useForm<Inputs>();
   const [showPassword, setShowPassword] = React.useState(false);
+  const context = React.useContext(ProductCom);
+  
 
   const navigate=useNavigate()
   
   const onSubmit: SubmitHandler<Inputs> =async (data) => {
     try {
-      const response = await axios.post('http://localhost:3000/admin/login', data);
+      const response = await axios.post('http://localhost:3000/admin/login', data, {withCredentials: true});
+
+      console.log(response);
+      
     
       if(response.status==200){
+
+
         toast.success('LogIn successful.');
-        const userData = response.data;
+         const adminData = response.data;
+
+         const admin:string=adminData.name;
+         const email:string=adminData.email;
+         
+           context?.setAdminAndData(admin,email)
         
-        localStorage.setItem('adminInfo',JSON.stringify(userData));
-        navigate('/')
+       
+         navigate('/')
       };
       
       

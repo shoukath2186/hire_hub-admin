@@ -1,30 +1,39 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { AxiosError } from "axios";
+import React, { useEffect, useState,useContext } from "react";
 import { User } from "../responseType/Users";
-import CustomModal from "../Dashboard/Modal";
+import CustomModal from "../Dashboard/Modal"; 
+import { toast } from 'react-toastify';
+import { useNavigate } from "react-router-dom";
 
+import { axiosInstance } from "../../axios/Interceptor";
+import { ProductCom } from "../../context/AppContext";
+// import { handleTokenError } from "../middleware/handleTokenError";
 
 
 const CandidateList: React.FC = () => {
   const [usersData, setUsers] = useState<User[]>([]);
+
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [open, setOpen] = useState<boolean>(false);
   const [modalHeading, setModalHeading] = useState<string>("");
   const [modalMessage, setModalMessage] = useState<string>("");
-
   const [Blockdata,setBlockdata]=useState('')
 
+  const navigate=useNavigate()
 
-
+  const context = useContext(ProductCom);
 
 
   useEffect(() => {
 
     async function findData() {
       try {
-        const response = await axios.get('http://localhost:3000/admin/getUserData');
-        console.log('API Response:', response.data);
 
+       const response = await axiosInstance.get("/admin/getUserData");
+
+
+       
+        
         if (Array.isArray(response.data)) {
           setUsers(response.data);
         } else if (response.data && Array.isArray(response.data.data)) {
@@ -34,7 +43,18 @@ const CandidateList: React.FC = () => {
           setUsers([]);
         }
       } catch (error) {
-        console.error('Error fetching user data:', error);
+        //console.error('Error fetching user data:', error);
+        // handleTokenError(error,toast,navigate,context)
+        const err = error as AxiosError
+        if (err?.response) {
+          let data:any=err?.response?.data
+          toast.error(data);
+          if(data=='No refresh token'||data=='Refresh token has expired'||data=='Invalid refresh token'||data=='No token'){
+             context?.cleareAdminData()
+             navigate('/login')
+          }
+       }
+
       }
     }
 
@@ -52,11 +72,12 @@ const CandidateList: React.FC = () => {
 
 
   const handleModal = async () => {
-   // console.log(Blockdata);
-    
     try {
-        const data=({userId:Blockdata})
-        const response = await axios.post('http://localhost:3000/admin/UserBlocking',data);
+        const response = await axiosInstance.patch(
+          `/admin/UserBlocking?id=${Blockdata}`,
+           {},
+          { withCredentials: true }
+         );
           
           if (Array.isArray(response.data)) {
             setUsers(response.data);
@@ -69,9 +90,18 @@ const CandidateList: React.FC = () => {
         
         
        } catch (error) {
-        console.log(error);
+        //console.log(123456789,error);
         
+        const err = error as AxiosError
+        if (err?.response) {
+          let data:any=err?.response?.data
+          toast.error(data);
+          if(data=='No refresh token'||data=='Refresh token has expired'||data=='Invalid refresh token'||data=='No token'){
+             context?.cleareAdminData()
+             navigate('/login')
+          }
        }
+      }
    
     setOpen(false);
     setBlockdata('')
@@ -80,8 +110,6 @@ const CandidateList: React.FC = () => {
 
   async function handileBlock(userId:string,status:boolean,userName:string){
     setBlockdata(userId)
-
-    console.log(userId);
     
      
     if(status){
@@ -115,6 +143,14 @@ const CandidateList: React.FC = () => {
 
   );
 
+  function dateFormate(data:any){
+    const date = data ? new Date(data) : null;
+
+    // Format the date
+    return  date ? date.toLocaleDateString() : 'N/A';
+  }
+
+  
   return (
     <div className="container mx-auto p-4">
      <CustomModal
@@ -142,6 +178,7 @@ const CandidateList: React.FC = () => {
               <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
               <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
               <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
+              <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Join Date</th>
               <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
               <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
             </tr>
@@ -168,6 +205,7 @@ const CandidateList: React.FC = () => {
                 <td className="px-6 py-3 whitespace-nowrap text-center">{candidate.user_name + ' ' + candidate.last_name}</td>
                 <td className="px-6 py-3 whitespace-nowrap text-center">{candidate.email}</td>
                 <td className="px-6 py-3 whitespace-nowrap text-center">{candidate.phone == 0 ? 'No Number' : candidate.phone}</td>
+                <td className="px-6 py-3 whitespace-nowrap text-center">{dateFormate(candidate.createdAt)}</td>
                 <td className="px-6 py-3 whitespace-nowrap text-center">{candidate.user_role}</td>
                 <td onClick={()=>handileBlock(candidate._id,candidate.isBlocked,candidate.user_name)} className="px-6 py-3 whitespace-nowrap flex justify-center items-center">
                   {candidate.isBlocked ? (
