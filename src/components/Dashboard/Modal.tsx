@@ -57,12 +57,12 @@ const CustomModal: React.FC<CustomModalProps> = ({
             <Button
               onClick={handleModal}
               sx={{
-                bgcolor: '#f44336', // Blue color for Submit button
+                bgcolor: '#f44336', 
                 color: 'white',
-                '&:hover': { bgcolor: '#d32f2f' }, // Darker blue on hover
+                '&:hover': { bgcolor: '#d32f2f' }, 
               }}
             >
-              Submit
+              Confirm
             </Button>
           </Box>
         </Box>

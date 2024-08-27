@@ -1,50 +1,69 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import JobTable from './JobComponents/JobTable';
+import axios, { AxiosError } from 'axios';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
+import { ProductCom } from '../../context/AppContext';
 
-interface Job {
-  id: number;
-  title: string;
-  company: string;
+interface getJob {
+  _id: string;
+  logo: string[];
+  name: string;
   location: string;
-  category: string;
+  title: string;
+  applications: string[];
+  category: string[];
+  is_blocked: boolean;
 }
 
 const JobList: React.FC = () => {
-  const initialJobs: Job[] = [
-    { id: 1, title: 'Software Engineer', company: 'Tech Co', location: 'San Francisco, CA', category: 'Software Development' },
-    { id: 2, title: 'Product Manager', company: 'Startup Inc', location: 'New York, NY', category: 'Management' },
-    { id: 3, title: 'Data Scientist', company: 'Big Data Corp', location: 'Seattle, WA', category: 'Data Science' },
-    { id: 4, title: 'UX Designer', company: 'Design Studio', location: 'Los Angeles, CA', category: 'Design' },
-  ];
-
-  const [jobs, setJobs] = useState<Job[]>(initialJobs);
+  const [jobs, setJobs] = useState<getJob[]>([]);
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
+  const [categories, setCategories] = useState<string[]>([]);
+  const [chenge,setChenge]=useState<boolean>(false)
+  const context = useContext(ProductCom);
+  const navigate = useNavigate();
 
-  const categories = Array.from(new Set(initialJobs.map(job => job.category)));
+  const getAllData = async () => {
+    try {
+      const response = await axios.get('http://localhost:3000/admin/allJobs', { withCredentials: true });
+      const allJobs: getJob[] = response.data;
+      //console.log(4567,response.data);
+      setJobs(allJobs);
+      setCategories(Array.from(new Set(allJobs.flatMap(job => job.category))));
+    } catch (error) {
+      const err = error as AxiosError;
+      if (err?.response) {
+        let data: any = err?.response?.data;
+        toast.error(data);
+        if (['No refresh token', 'Refresh token has expired', 'Invalid refresh token', 'No token'].includes(data)) {
+          context?.cleareAdminData();
+          navigate('/login');
+        }
+      }
+    }
+  };
 
-  const filteredJobs = jobs.filter(job => 
-    job.title.toLowerCase().includes(search.toLowerCase()) &&
-    (selectedCategory === '' || job.category === selectedCategory)
-  );
+  useEffect(() => {
+    getAllData();
+  }, [chenge]);
 
   return (
-    <div className="bg-white shadow-md rounded-lg overflow-hidden">
-      <div className="px-6 py-4 bg-gray-50 border-b">
-        <h2 className="text-xl font-semibold text-gray-800">Job Listings</h2>
-      </div>
-      <div className="p-6">
-        <div className="flex mb-4 space-x-4">
+    <div className="bg-blue-50 shadow-sm rounded-lg overflow-hidden">
+      <div className="p-4 sm:p-6 bg-gray-300">
+        <div className="flex flex-col sm:flex-row mb-4 space-y-4 sm:space-y-0 sm:space-x-4">
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search jobs"
-            className="flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full sm:w-auto flex-grow px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
           />
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
           >
             <option value="">All Categories</option>
             {categories.map((category, index) => (
@@ -52,26 +71,10 @@ const JobList: React.FC = () => {
             ))}
           </select>
         </div>
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Company</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {filteredJobs.map((job) => (
-              <tr key={job.id}>
-                <td className="px-6 py-4 whitespace-nowrap">{job.title}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{job.company}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{job.location}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{job.category}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+
+        <div className="overflow-x-auto">
+        <JobTable jobs={jobs} search={search} selectedCategory={selectedCategory} chenge={chenge} setChenge={setChenge}/>
+        </div>
       </div>
     </div>
   );
