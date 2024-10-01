@@ -55,7 +55,7 @@ function JobTable({ jobs, search, selectedCategory, chenge, setChenge }: JobTabl
 
   const handleModal = async () => {
     try {
-      const response = await axios.patch('http://localhost:3000/admin/blockJob',{id:id}, { withCredentials: true });
+      const response = await axios.patch('https://newyourchoice.shop/admin/blockJob',{id:id}, { withCredentials: true });
        toast.success(response.data)
        handleClose()
        setChenge(!chenge)

@@ -20,7 +20,7 @@ const SignIn: React.FC = () => {
   
   const onSubmit: SubmitHandler<Inputs> =async (data) => {
     try {
-      const response = await axios.post('http://localhost:3000/admin/login', data, {withCredentials: true});
+      const response = await axios.post('https://newyourchoice.shop/admin/login', data, {withCredentials: true});
 
       console.log(response);
       
@@ -34,7 +34,8 @@ const SignIn: React.FC = () => {
          const admin:string=adminData.name;
          const email:string=adminData.email;
          
-           context?.setAdminAndData(admin,email)
+          context?.setAdminAndData(admin,email)
+          
         
        
          navigate('/')

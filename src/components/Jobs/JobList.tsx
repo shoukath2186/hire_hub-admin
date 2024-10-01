@@ -27,7 +27,7 @@ const JobList: React.FC = () => {
 
   const getAllData = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/admin/allJobs', { withCredentials: true });
+      const response = await axios.get('https://newyourchoice.shop/admin/allJobs', { withCredentials: true });
       const allJobs: getJob[] = response.data;
       //console.log(4567,response.data);
       setJobs(allJobs);

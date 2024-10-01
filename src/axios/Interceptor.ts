@@ -3,7 +3,7 @@
 
 
     export const axiosInstance: AxiosInstance = axios.create({
-        baseURL: "http://localhost:3000",
+        baseURL: "https://newyourchoice.shop",
         withCredentials: true,
     });
     

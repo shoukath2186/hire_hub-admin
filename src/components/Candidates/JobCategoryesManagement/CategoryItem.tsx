@@ -28,7 +28,7 @@ const CategoryItem: React.FC<CategoryItemProps> = ({ category, toggleBlock, edit
   const handleModal = async () => {
 
     try {
-      await axios.delete(`http://localhost:3000/admin/deleteCategory?id=${id}`, { withCredentials: true });
+      await axios.delete(`https://newyourchoice.shop/admin/deleteCategory?id=${id}`, { withCredentials: true });
       setChinge(!chinge);
       toast.success('detet successfully!');
       setOpen(false)

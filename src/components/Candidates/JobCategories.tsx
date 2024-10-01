@@ -27,7 +27,7 @@ const JobCategories: React.FC = () => {
 
   const getAllData = async () => {
     try {
-      const categoryData = await axios.get('http://localhost:3000/admin/allCategory', { withCredentials: true });
+      const categoryData = await axios.get('https://newyourchoice.shop/admin/allCategory', { withCredentials: true });
       const category = categoryData.data;
       setCategories(category);
     } catch (error) {
@@ -68,7 +68,7 @@ const JobCategories: React.FC = () => {
 
       setNewCategory('');
       try {
-        const categoryData = await axios.post('http://localhost:3000/admin/addCategory', { name: trimmedCategory }, { withCredentials: true });
+        const categoryData = await axios.post('https://newyourchoice.shop/admin/addCategory', { name: trimmedCategory }, { withCredentials: true });
         setCategories(categoryData.data);
       } catch (error) {
         const err = error as AxiosError;
@@ -103,7 +103,7 @@ const JobCategories: React.FC = () => {
   const handleModal = async () => {
     try {
       const response = await axios.patch(
-        `http://localhost:3000/admin/categoryBlocking?id=${blockData}`,
+        `https://newyourchoice.shop/admin/categoryBlocking?id=${blockData}`,
         {},
         { withCredentials: true }
       );

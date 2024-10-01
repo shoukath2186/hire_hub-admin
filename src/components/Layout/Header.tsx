@@ -56,7 +56,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
     setOpen(false);
     try {
       
-      const responce = await axios.post('http://localhost:3000/admin/logout', { data: 'admin' },({ withCredentials: true}));
+      const responce = await axios.post('https://newyourchoice.shop/admin/logout', { data: 'admin' },({ withCredentials: true}));
       if (responce.data == 'success') {
        
           context?.cleareAdminData()

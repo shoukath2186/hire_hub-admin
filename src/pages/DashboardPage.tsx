@@ -20,7 +20,7 @@ const Dashboard: React.FC = () => {
 
   const fetchAdminGraph = async () => {
     try {
-      const { data } = await axios.get(`http://localhost:3000/graph`, { withCredentials: true });
+      const { data } = await axios.get(`https://newyourchoice.shop/graph`, { withCredentials: true });
 
       console.log('graph Data',data);
 

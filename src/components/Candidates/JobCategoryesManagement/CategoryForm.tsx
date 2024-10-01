@@ -55,7 +55,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
     
 
     try {
-      await axios.patch('http://localhost:3000/admin/editCategory', { id, newCategory }, { withCredentials: true });
+      await axios.patch('https://newyourchoice.shop/admin/editCategory', { id, newCategory }, { withCredentials: true });
       setChinge(!chinge);
       setNewCategory('')
       setEdit(false)
