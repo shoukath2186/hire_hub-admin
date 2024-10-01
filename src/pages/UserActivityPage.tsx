@@ -1,5 +1,6 @@
 import React from 'react';
-import UserActivity from '../components/Candidates/UserActivity';
+
+import UserActivity from '../components/Candidates/JobMegagment';
 
 const UserActivityPage: React.FC = () => {
   return (
